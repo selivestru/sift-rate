@@ -1,3 +1,5 @@
+'use client'
+
 import { RatingList } from '~/components/features/rating'
 import { api } from '~/trpc/react'
 
