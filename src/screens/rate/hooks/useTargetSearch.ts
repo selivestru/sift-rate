@@ -1,18 +1,9 @@
 import { type AxiosError } from 'axios'
 import { useState } from 'react'
-import {
-  SearchService,
-  type ISelectedTargetItem,
-  type ITargetItem
-} from '~/components/features/rating'
+import { SearchService, type ITargetItem } from '~/components/features/rating'
 import type { ContentType } from '~/generated/prisma'
 
-export const useTargetSearch = (
-  selectedType: ContentType,
-  setSelectedTargetItem: React.Dispatch<
-    React.SetStateAction<ISelectedTargetItem | null>
-  >
-) => {
+export const useTargetSearch = (selectedType: ContentType) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [result, setResult] = useState<ITargetItem[] | null | undefined>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -65,19 +56,6 @@ export const useTargetSearch = (
     setTotalResults(0)
   }
 
-  const selectTarget = (result: ITargetItem) => {
-    setSelectedTargetItem({
-      externalId: result.id,
-      title: result.title,
-      description: result.description,
-      coverUrl: result.cover,
-      type: selectedType,
-      releaseDate: result.releaseDate
-        ? new Date(result.releaseDate).toISOString()
-        : undefined
-    })
-  }
-
   const onChangePage = (page: number) => {
     setCurrentPage(page)
     void searchTargets(page)
@@ -90,7 +68,6 @@ export const useTargetSearch = (
     isLoading,
     searchTargets,
     clearSearch,
-    selectTarget,
     totalPages,
     totalResults,
     currentPage,

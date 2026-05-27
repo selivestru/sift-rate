@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import type { IRatingCardData, ITimeline } from '~/components/features/rating'
+import type { ITimeline } from '~/components/features/rating'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { db } from '~/server/db'
 import {
@@ -326,7 +326,7 @@ export const reviewRouter = createTRPCRouter({
         }
       })
 
-      return reviews as IRatingCardData[]
+      return reviews
     }),
   getTimelineStats: protectedProcedure.query(async ({ ctx }) => {
     const reviews = await db.review.findMany({

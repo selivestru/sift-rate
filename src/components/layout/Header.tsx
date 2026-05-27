@@ -1,21 +1,23 @@
 'use client'
 
 import { Button } from '@heroui/button'
-import { LogOutIcon, UserIcon } from 'lucide-react'
+import { LogOutIcon, MenuIcon, UserIcon, XIcon } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { NAV_LINKS } from '~/constants/navLinks'
 import { ROUTES } from '~/constants/routes'
 import { Show } from '../ui/show'
 
 interface IHeaderProps {
   email: string | null | undefined
+  isMobileNavOpen: boolean
+  onToggleMobileNav: () => void
 }
 
-export const Header = ({ email }: IHeaderProps) => {
-  const pathname = usePathname()
-
+export const Header = ({
+  email,
+  isMobileNavOpen,
+  onToggleMobileNav
+}: IHeaderProps) => {
   const handleSignOut = async () => {
     await signOut({
       redirectTo: ROUTES.HOME
@@ -23,37 +25,31 @@ export const Header = ({ email }: IHeaderProps) => {
   }
 
   return (
-    <header className='border-b-border bg-background-primary/60 pt-safe-or-4 fixed top-0 z-50 w-full border-b pb-4 backdrop-blur-xl'>
-      <div className='app-container flex h-full max-w-fit! items-center justify-center gap-4 lg:justify-between'>
+    <header className='border-b-border bg-background-primary/60 pt-safe-or-4 fixed top-0 z-50 h-17.5 w-full border-b pb-4 backdrop-blur-xl'>
+      <div className='app-container flex h-full items-center justify-between gap-4'>
+        <Button
+          isIconOnly
+          variant='flat'
+          className='lg:hidden'
+          onPress={onToggleMobileNav}>
+          {isMobileNavOpen ? (
+            <XIcon className='size-5' />
+          ) : (
+            <MenuIcon className='size-5' />
+          )}
+        </Button>
         <Link
           prefetch
           href={ROUTES.REVIEWS}
-          className='flex shrink-0 items-center gap-2'>
+          className='flex min-w-0 shrink items-center gap-2 lg:shrink-0'>
           <div className='bg-secondary-400 flex size-8 items-center justify-center rounded-lg'>
             <span className='text-primary-foreground text-lg font-bold'>S</span>
           </div>
-          <span className='text-foreground font-roboto-slab text-xl font-bold'>
+          <span className='text-foreground font-roboto-slab truncate text-xl font-bold'>
             Sift-Rate
           </span>
         </Link>
-        <nav className='hidden w-full items-center gap-2 lg:flex'>
-          {NAV_LINKS.map(({ label, href, icon: Icon }) => {
-            const isActive = pathname === href
-            return (
-              <Button
-                prefetch
-                key={href}
-                as={Link}
-                href={href}
-                variant={isActive ? 'flat' : 'light'}
-                color={isActive ? 'secondary' : 'default'}
-                startContent={<Icon className='size-4.5' />}>
-                <span className='text-sm font-semibold'>{label}</span>
-              </Button>
-            )
-          })}
-        </nav>
-        <div className='absolute right-4 flex items-center gap-2 lg:static'>
+        <div className='flex shrink-0 items-center gap-2'>
           <Show when={!!email}>
             <div className='hidden items-center gap-2 lg:flex'>
               <UserIcon className='size-5' />

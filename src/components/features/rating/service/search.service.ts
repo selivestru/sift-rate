@@ -1,13 +1,14 @@
 import axios from 'axios'
 import dayjs from 'dayjs'
 import { env } from '~/env'
-import { type ContentType } from '~/generated/prisma'
+import { ContentType } from '~/generated/prisma'
 import type {
   IAlbumTargetItem,
   IBookTargetItem,
   IGameTargetItem,
   IMovieTargetItem,
   ISearchResult,
+  ISelectedTargetItem,
   ISongTargetItem,
   ITargetItem,
   ITvTargetItem
@@ -36,6 +37,26 @@ export class SearchService {
         return this.searchGames(query, page)
       case 'BOOK':
         return this.searchBooks(query, page)
+    }
+  }
+
+  async searchById(
+    category: ContentType,
+    id: string
+  ): Promise<ISelectedTargetItem | null> {
+    switch (category) {
+      case 'MOVIE':
+        return this.searchMovieById(id)
+      case 'TV':
+        return this.searchTvById(id)
+      case 'SONG':
+        return this.searchSongById(id)
+      case 'ALBUM':
+        return this.searchAlbumById(id)
+      case 'GAME':
+        return this.searchGameById(id)
+      case 'BOOK':
+        return this.searchBookById(id)
     }
   }
 
@@ -106,6 +127,55 @@ export class SearchService {
     }
   }
 
+  private async searchMovieById(
+    id: string
+  ): Promise<ISelectedTargetItem | null> {
+    const { data } = await axios.get<{
+      title: string
+      genres: { id: number }[]
+      release_date: string
+      poster_path: string
+    }>(`https://api.themoviedb.org/3/movie/${id}`, {
+      headers: {
+        Authorization: `Bearer ${env.NEXT_PUBLIC_MOVIE_DB_API_KEY}`
+      },
+      params: {
+        language: 'ru-RU'
+      }
+    })
+
+    if (!data) {
+      return null
+    }
+
+    const title = data.title
+    const genres = data.genres
+      .map(({ id }) => this.getMovieGenreName(id))
+      .join(' • ')
+    const releaseDate = data.release_date
+    const coverUrl = data.poster_path
+      ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
+      : undefined
+
+    let description = ''
+
+    if (genres.length > 0) {
+      description += genres
+    }
+
+    if (releaseDate) {
+      description += ` • ${dayjs(releaseDate).format('YYYY')}`
+    }
+
+    return {
+      externalId: id,
+      type: ContentType.MOVIE,
+      title,
+      coverUrl,
+      description
+    }
+  }
+
   private async searchTv(query: string, page: number): Promise<ISearchResult> {
     const { data } = await axios.get<{
       results: ITvTargetItem[]
@@ -170,6 +240,51 @@ export class SearchService {
     }
   }
 
+  private async searchTvById(id: string): Promise<ISelectedTargetItem | null> {
+    const { data } = await axios.get<{
+      name: string
+      genres: { id: number }[]
+      first_air_date: string
+      poster_path: string
+    }>(`https://api.themoviedb.org/3/tv/${id}`, {
+      headers: {
+        Authorization: `Bearer ${env.NEXT_PUBLIC_MOVIE_DB_API_KEY}`
+      },
+      params: {
+        language: 'ru-RU'
+      }
+    })
+
+    if (!data) {
+      return null
+    }
+
+    const title = data.name
+    const genres = data.genres
+      .map(({ id }) => this.getTvGenreName(id))
+      .join(' • ')
+    const releaseDate = data.first_air_date
+    const coverUrl = data.poster_path
+      ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
+      : undefined
+
+    let description = ''
+
+    if (genres.length > 0) {
+      description += genres
+    }
+
+    description += ` • ${dayjs(releaseDate).format('YYYY')}`
+
+    return {
+      externalId: id,
+      type: ContentType.MOVIE,
+      title,
+      coverUrl,
+      description
+    }
+  }
+
   private async searchSongs(
     query: string,
     page: number
@@ -211,6 +326,33 @@ export class SearchService {
     }
   }
 
+  private async searchSongById(
+    id: string
+  ): Promise<ISelectedTargetItem | null> {
+    console.debug('WINDOW', typeof window)
+
+    const { data } = await axios.get<{
+      title: string
+      album: { cover_big: string }
+      artist: { name: string }
+      release_date: string
+    }>(`${env.NEXT_PUBLIC_SITE_URL}/api/deezer/search/song/${id}`)
+
+    if (!data) {
+      return null
+    }
+
+    const description = `${data.artist.name} • ${dayjs(data.release_date).format('YYYY')}`
+
+    return {
+      externalId: id,
+      type: ContentType.SONG,
+      title: data.title,
+      coverUrl: data.album.cover_big,
+      description
+    }
+  }
+
   private async searchAlbums(
     query: string,
     page: number
@@ -249,6 +391,31 @@ export class SearchService {
       page: page + 1,
       totalPages: getPages(data.total),
       totalResults: data.total
+    }
+  }
+
+  private async searchAlbumById(
+    id: string
+  ): Promise<ISelectedTargetItem | null> {
+    const { data } = await axios.get<{
+      title: string
+      cover_big: string
+      artist: { name: string }
+      release_date: string
+    }>(`${env.NEXT_PUBLIC_SITE_URL}/api/deezer/search/album/${id}`)
+
+    if (!data) {
+      return null
+    }
+
+    const description = `${data.artist.name} • ${dayjs(data.release_date).format('YYYY')}`
+
+    return {
+      externalId: id,
+      type: ContentType.ALBUM,
+      title: data.title,
+      coverUrl: data.cover_big,
+      description
     }
   }
 
@@ -302,6 +469,41 @@ export class SearchService {
     }
   }
 
+  private async searchGameById(
+    id: string
+  ): Promise<ISelectedTargetItem | null> {
+    const { data } = await axios.get<{
+      name: string
+      background_image: string
+      genres: { name: string }[]
+      released: string
+    }>(`https://api.rawg.io/api/games/${id}`, {
+      params: {
+        key: env.NEXT_PUBLIC_RAWG_API_KEY
+      }
+    })
+
+    if (!data) {
+      return null
+    }
+
+    let description = ''
+
+    if (data.genres && data.genres.length > 0) {
+      description += data.genres.map((genre) => genre.name).join(' • ') + ' • '
+    }
+
+    description += dayjs(data.released).format('YYYY')
+
+    return {
+      externalId: id,
+      type: ContentType.GAME,
+      title: data.name,
+      coverUrl: data.background_image,
+      description
+    }
+  }
+
   private async searchBooks(
     query: string,
     page: number
@@ -349,6 +551,40 @@ export class SearchService {
       page: page + 1,
       totalPages: getPages(data.totalItems),
       totalResults: data.totalItems
+    }
+  }
+
+  private async searchBookById(
+    id: string
+  ): Promise<ISelectedTargetItem | null> {
+    const { data } = await axios.get<{
+      volumeInfo: {
+        title: string
+        imageLinks: { thumbnail: string }
+        authors: string[]
+        publishedDate: string
+      }
+    }>(`https://www.googleapis.com/books/v1/volumes/${id}`)
+
+    if (!data) {
+      return null
+    }
+
+    let description = ''
+    const authors = data.volumeInfo.authors
+
+    if (authors && authors.length > 0) {
+      description += authors.join(' • ') + ' • '
+    }
+
+    description += dayjs(data.volumeInfo.publishedDate).format('YYYY')
+
+    return {
+      externalId: id,
+      type: ContentType.BOOK,
+      title: data.volumeInfo.title,
+      coverUrl: data.volumeInfo.imageLinks?.thumbnail,
+      description
     }
   }
 

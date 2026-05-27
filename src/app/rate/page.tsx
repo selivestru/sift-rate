@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { PageTitle } from '~/components/ui/page-title'
 import { buildSeoMetadata } from '~/lib/seo'
 import { RatePage } from '~/screens/rate'
 
@@ -17,5 +18,10 @@ export const generateMetadata = (): Metadata =>
   })
 
 export default function Rate() {
-  return <RatePage />
+  return (
+    <>
+      <PageTitle className='text-left'>Выберите категорию</PageTitle>
+      <RatePage />
+    </>
+  )
 }

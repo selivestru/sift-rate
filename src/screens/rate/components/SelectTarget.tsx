@@ -2,7 +2,7 @@ import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
 import { Pagination } from '@heroui/pagination'
 import { ChevronRight, SearchIcon } from 'lucide-react'
-import type { ISelectedTargetItem } from '~/components/features/rating'
+import Link from 'next/link'
 import { LoadingSpinner } from '~/components/ui/loading-spinner'
 import { ReviewCover } from '~/components/ui/review-cover'
 import { Show } from '~/components/ui/show'
@@ -10,17 +10,11 @@ import type { ContentType } from '~/generated/prisma'
 import { useTargetSearch } from '../hooks/useTargetSearch'
 import { getItemCountText } from '../utils/getItemCountText'
 
-interface IStep2SelectTargetProps {
-  selectedType: ContentType
-  setSelectedTargetItem: React.Dispatch<
-    React.SetStateAction<ISelectedTargetItem | null>
-  >
+interface ISelectTargetProps {
+  category: ContentType
 }
 
-export const Step2SelectTarget = ({
-  selectedType,
-  setSelectedTargetItem
-}: IStep2SelectTargetProps) => {
+export const SelectTarget = ({ category }: ISelectTargetProps) => {
   const {
     searchTerm,
     setSearchTerm,
@@ -28,13 +22,12 @@ export const Step2SelectTarget = ({
     result,
     isLoading,
     searchTargets,
-    selectTarget,
     currentPage,
     onChangePage,
     totalPages,
     totalResults,
     error
-  } = useTargetSearch(selectedType, setSelectedTargetItem)
+  } = useTargetSearch(category)
 
   return (
     <div className='flex flex-col gap-4'>
@@ -68,7 +61,7 @@ export const Step2SelectTarget = ({
       )}
       {!isLoading && totalResults > 0 && (
         <p className='text-muted-foreground text-center text-base'>
-          Всего: {totalResults} {getItemCountText(totalResults, selectedType)}
+          Всего: {totalResults} {getItemCountText(totalResults, category)}
         </p>
       )}
       {!isLoading && result?.length === 0 && (
@@ -78,10 +71,10 @@ export const Step2SelectTarget = ({
       )}
       <div className='z-px flex flex-col gap-3'>
         {result?.map((result) => (
-          <button
+          <Link
             key={result.id}
-            className='bg-card-background border-border hover:border-secondary group flex w-full cursor-pointer items-center gap-4 rounded-xl border p-4 transition-all'
-            onClick={() => selectTarget(result)}>
+            href={`/rate/${category.toLowerCase()}/${result.id}`}
+            className='bg-card-background border-border hover:border-secondary group flex w-full cursor-pointer items-center gap-4 rounded-xl border p-4 transition-all'>
             <ReviewCover title={result.title} coverUrl={result.cover} />
             <div className='flex-1 overflow-hidden text-left'>
               <h3 className='group-hover:text-secondary line-clamp-2 text-base font-semibold transition-colors'>
@@ -95,7 +88,7 @@ export const Step2SelectTarget = ({
               <ChevronRight className='text-muted-foreground group-hover:text-secondary size-full transition-colors' />
               <ChevronRight className='text-muted-foreground group-hover:text-secondary absolute top-0 left-0 size-full transition-all group-hover:translate-x-1.5' />
             </div>
-          </button>
+          </Link>
         ))}
       </div>
       {!isLoading && totalPages > 1 && (

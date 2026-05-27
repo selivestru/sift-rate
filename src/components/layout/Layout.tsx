@@ -1,23 +1,22 @@
+import { env } from '~/env'
 import { auth } from '~/server/auth'
-import { Header } from './Header'
-import { Main } from './Main'
-import { MobileNav } from './MobileNav'
+import { Show } from '../ui/show'
+import { LayoutShell } from './LayoutShell'
 import { SeasonalEffect } from './SeasonalEffect'
 
 export const Layout = async ({ children }: React.PropsWithChildren) => {
   const session = await auth()
-  const user = session?.user
 
-  if (!user) {
+  if (!session?.user) {
     return <>{children}</>
   }
 
   return (
     <>
-      <SeasonalEffect />
-      <Header email={user.email} />
-      <Main>{children}</Main>
-      <MobileNav />
+      <Show when={env.NODE_ENV !== 'development'}>
+        <SeasonalEffect />
+      </Show>
+      <LayoutShell email={session.user.email}>{children}</LayoutShell>
     </>
   )
 }

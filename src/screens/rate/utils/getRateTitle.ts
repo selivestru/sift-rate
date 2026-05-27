@@ -1,4 +1,3 @@
-import type { ISelectedTargetItem } from '~/components/features/rating'
 import type { ContentType } from '~/generated/prisma'
 
 const TITLE_MAP: Record<ContentType, string> = {
@@ -10,13 +9,5 @@ const TITLE_MAP: Record<ContentType, string> = {
   BOOK: 'Выберите книгу'
 }
 
-export const getRateTitle = (
-  selectedType: ContentType | null,
-  selectedTargetItem: ISelectedTargetItem | null
-) => {
-  return selectedTargetItem
-    ? 'Ваша оценка'
-    : selectedType
-      ? TITLE_MAP[selectedType]
-      : 'Выберите категорию'
-}
+export const getRateTitle = (selectedType: ContentType) =>
+  TITLE_MAP[selectedType]

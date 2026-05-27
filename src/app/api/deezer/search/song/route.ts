@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await axios.get('https://api.deezer.com/search', {
+    const response = await axios.get('https://api.deezer.com/search/track', {
       params: { q, limit, index }
     })
 

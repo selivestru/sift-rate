@@ -1,4 +1,10 @@
-import { BookIcon, ClockIcon, StarIcon, TrophyIcon } from 'lucide-react'
+import {
+  BookIcon,
+  CircleDashedIcon,
+  ClockIcon,
+  StarIcon,
+  TrophyIcon
+} from 'lucide-react'
 import { ROUTES } from './routes'
 
 export const NAV_LINKS = [
@@ -16,6 +22,11 @@ export const NAV_LINKS = [
     href: ROUTES.RANKING_LIST,
     label: 'Рейтинги',
     icon: TrophyIcon
+  },
+  {
+    href: ROUTES.WHEEL,
+    label: 'Колесо',
+    icon: CircleDashedIcon
   },
   {
     href: ROUTES.RATE,

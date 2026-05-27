@@ -12,10 +12,7 @@ import {
   type CreateReviewSchemaType
 } from '~/utils/validators'
 
-export const useRateSubmit = (
-  selectedTargetItem: ISelectedTargetItem,
-  reset: () => void
-) => {
+export const useRateSubmit = (targetItem: ISelectedTargetItem) => {
   const utils = api.useUtils()
   const { mutateAsync, isPending: isCreating } = api.review.create.useMutation({
     onSuccess: (data, variables) => {
@@ -81,19 +78,17 @@ export const useRateSubmit = (
     }
   })
 
-  const { register, setValue, handleSubmit, watch } =
-    useForm<CreateReviewSchemaType>({
-      defaultValues: {
-        coverUrl: selectedTargetItem.coverUrl,
-        externalId: selectedTargetItem.externalId,
-        releaseDate: selectedTargetItem.releaseDate,
-        title: selectedTargetItem.title,
-        type: selectedTargetItem.type,
-        rating: 0,
-        review: ''
-      },
-      resolver: zodResolver(createReviewSchema)
-    })
+  const { control, handleSubmit, reset } = useForm<CreateReviewSchemaType>({
+    defaultValues: {
+      coverUrl: targetItem.coverUrl,
+      externalId: targetItem.externalId,
+      title: targetItem.title,
+      type: targetItem.type,
+      rating: 0,
+      review: ''
+    },
+    resolver: zodResolver(createReviewSchema)
+  })
 
   const onSubmit = handleSubmit(async (data: CreateReviewSchemaType) => {
     try {
@@ -120,10 +115,8 @@ export const useRateSubmit = (
   })
 
   return {
-    register,
-    setValue,
+    control,
     isCreating,
-    watch,
     onSubmit
   }
 }

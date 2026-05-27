@@ -1,15 +1,15 @@
 import type { ContentType } from '~/generated/prisma'
 
-export const getItemCountText = (count: number, type: ContentType) => {
-  const forms: Record<ContentType, string[]> = {
-    MOVIE: ['фильм', 'фильма', 'фильмов'],
-    TV: ['сериал', 'сериала', 'сериалов'],
-    SONG: ['песня', 'песен', 'песен'],
-    ALBUM: ['альбом', 'альбома', 'альбомов'],
-    GAME: ['игра', 'игры', 'игр'],
-    BOOK: ['книга', 'книги', 'книг']
-  }
+const forms: Record<ContentType, string[]> = {
+  MOVIE: ['фильм', 'фильма', 'фильмов'],
+  TV: ['сериал', 'сериала', 'сериалов'],
+  SONG: ['песня', 'песен', 'песен'],
+  ALBUM: ['альбом', 'альбома', 'альбомов'],
+  GAME: ['игра', 'игры', 'игр'],
+  BOOK: ['книга', 'книги', 'книг']
+}
 
+export const getItemCountText = (count: number, type: ContentType) => {
   const form = (n: number, [one, two, five]: string[]) => {
     n = Math.abs(n) % 100
     const n1 = n % 10

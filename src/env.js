@@ -19,7 +19,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_MOVIE_DB_API_KEY: z.string(),
     NEXT_PUBLIC_RAWG_API_KEY: z.string(),
-    NEXT_PUBLIC_SITE_URL: z.string().url().optional()
+    NEXT_PUBLIC_SITE_URL: z.string().url()
   },
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,

@@ -1,3 +1,5 @@
+'use client'
+
 import { Input } from '@heroui/input'
 import { SearchIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'

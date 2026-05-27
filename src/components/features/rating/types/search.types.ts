@@ -81,7 +81,6 @@ export interface ISelectedTargetItem {
   type: ContentType
   title: string
   coverUrl?: string
-  releaseDate?: string
   description: string
 }
 
