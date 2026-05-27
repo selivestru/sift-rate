@@ -74,7 +74,7 @@ export class SearchService {
         Authorization: `Bearer ${env.NEXT_PUBLIC_MOVIE_DB_API_KEY}`
       },
       params: {
-        query: encodeURIComponent(query),
+        query,
         language: 'ru-RU',
         page,
         include_adult: true
@@ -103,12 +103,10 @@ export class SearchService {
       let description = ''
 
       if (genres.length > 0) {
-        description += genres
+        description += genres + ' • '
       }
 
-      if (releaseDate) {
-        description += ` • ${dayjs(releaseDate).format('YYYY')}`
-      }
+      description += dayjs(releaseDate).format('YYYY')
 
       return {
         id: String(item.id),
@@ -160,12 +158,10 @@ export class SearchService {
     let description = ''
 
     if (genres.length > 0) {
-      description += genres
+      description += genres + ' • '
     }
 
-    if (releaseDate) {
-      description += ` • ${dayjs(releaseDate).format('YYYY')}`
-    }
+    description += dayjs(releaseDate).format('YYYY')
 
     return {
       externalId: id,
@@ -187,7 +183,7 @@ export class SearchService {
         Authorization: `Bearer ${env.NEXT_PUBLIC_MOVIE_DB_API_KEY}`
       },
       params: {
-        query: encodeURIComponent(query),
+        query,
         language: 'ru-RU',
         page,
         include_adult: true
@@ -216,12 +212,10 @@ export class SearchService {
       let description = ''
 
       if (genres.length > 0) {
-        description += genres
+        description += genres + ' • '
       }
 
-      if (releaseDate) {
-        description += ` • ${dayjs(releaseDate).format('YYYY')}`
-      }
+      description += dayjs(releaseDate).format('YYYY')
 
       return {
         id: String(item.id),
@@ -271,10 +265,10 @@ export class SearchService {
     let description = ''
 
     if (genres.length > 0) {
-      description += genres
+      description += genres + ' • '
     }
 
-    description += ` • ${dayjs(releaseDate).format('YYYY')}`
+    description += dayjs(releaseDate).format('YYYY')
 
     return {
       externalId: id,
@@ -428,7 +422,7 @@ export class SearchService {
       count: number
     }>('https://api.rawg.io/api/games?search', {
       params: {
-        search: encodeURIComponent(query),
+        search: query,
         key: env.NEXT_PUBLIC_RAWG_API_KEY,
         page
       }
@@ -513,7 +507,7 @@ export class SearchService {
       totalItems: number
     }>('https://www.googleapis.com/books/v1/volumes', {
       params: {
-        q: encodeURIComponent(query),
+        q: query,
         maxResults: LIMIT_PER_PAGE,
         startIndex: (page - 1) * LIMIT_PER_PAGE
       }

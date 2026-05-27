@@ -32,7 +32,7 @@ const NavLinksList = ({ onNavigate }: NavLinksListProps) => {
             href={href}
             onClick={onNavigate}
             className={cn(
-              'flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-300 lg:px-6',
+              'flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-300 lg:px-10',
               isActive
                 ? 'bg-secondary/15 text-secondary'
                 : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
@@ -48,8 +48,8 @@ const NavLinksList = ({ onNavigate }: NavLinksListProps) => {
 
 export const SidebarNav = () => {
   return (
-    <aside className='sticky top-0 hidden h-fit pt-[calc(62px+10px+env(safe-area-inset-top))] lg:block'>
-      <nav className='border-r-border border-b-border bg-background-primary/60 flex flex-col gap-3 border-r border-b p-2 backdrop-blur-xl'>
+    <aside className='sticky top-0 hidden h-fit pt-[calc(60px+10px+env(safe-area-inset-top))] lg:block'>
+      <nav className='border-border bg-background-primary/60 flex flex-col gap-3 border border-t-transparent p-2 backdrop-blur-xl'>
         <NavLinksList />
       </nav>
     </aside>

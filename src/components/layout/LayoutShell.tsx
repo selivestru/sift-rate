@@ -32,7 +32,7 @@ export const LayoutShell = ({ children, email }: LayoutShellProps) => {
         isOpen={isMobileNavOpen}
         onClose={() => setIsMobileNavOpen(false)}
       />
-      <div className='grid flex-1 gap-4 lg:grid-cols-[auto_1fr]'>
+      <div className='flex flex-1 justify-center gap-4'>
         <SidebarNav />
         <Main>{children}</Main>
       </div>
