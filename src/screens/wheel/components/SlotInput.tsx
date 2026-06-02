@@ -26,6 +26,7 @@ export const SlotInput = () => {
     <div className='grid grid-cols-[1fr_auto] gap-3'>
       <Input
         ref={inputRef}
+        autoComplete='off'
         value={value}
         onValueChange={setValue}
         onKeyDown={(e) => e.key === 'Enter' && handleAddSlot()}

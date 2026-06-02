@@ -26,6 +26,7 @@ export const RatingListSearch = () => {
 
   return (
     <Input
+      autoComplete='off'
       type='search'
       isClearable
       placeholder='Поиск'

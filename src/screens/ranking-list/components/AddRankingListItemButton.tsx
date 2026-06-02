@@ -83,6 +83,7 @@ const AddRankingListItemButton = ({
               </ModalHeader>
               <ModalBody>
                 <Input
+                  autoComplete='off'
                   type='search'
                   isClearable
                   placeholder='Поиск по названию'

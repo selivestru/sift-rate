@@ -42,6 +42,7 @@ export const CreateRankingListModal = () => {
                 <Input
                   {...register('title')}
                   autoFocus
+                  autoComplete='off'
                   placeholder={`Например, «Лучшие фильмы ${new Date().getFullYear()}»`}
                   maxLength={80}
                   description={`${title.trim().length}/80`}

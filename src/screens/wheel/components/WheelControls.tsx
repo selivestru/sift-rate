@@ -107,6 +107,7 @@ export const WheelControls = () => {
           {isSpinning ? 'Крутится...' : 'Крутить'}
         </Button>
         <Input
+          autoComplete='off'
           endContent={<span className='text-default-400 text-small'>с</span>}
           value={duration}
           onChange={handleChangeDuration}

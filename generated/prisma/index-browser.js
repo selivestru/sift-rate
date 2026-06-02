@@ -188,6 +188,13 @@ exports.Prisma.RankingListItemScalarFieldEnum = {
   itemReviewId: 'itemReviewId'
 };
 
+exports.Prisma.WishlistItemScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  itemReviewId: 'itemReviewId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -219,7 +226,8 @@ exports.Prisma.ModelName = {
   ItemReview: 'ItemReview',
   Review: 'Review',
   RankingList: 'RankingList',
-  RankingListItem: 'RankingListItem'
+  RankingListItem: 'RankingListItem',
+  WishlistItem: 'WishlistItem'
 };
 
 /**

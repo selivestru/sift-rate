@@ -194,7 +194,7 @@ export const reviewRouter = createTRPCRouter({
         }
       })
 
-      return await ctx.db.review.create({
+      const review = await ctx.db.review.create({
         data: {
           rating: input.rating,
           review: input.review.length === 0 ? null : input.review,
@@ -210,6 +210,15 @@ export const reviewRouter = createTRPCRouter({
           }
         }
       })
+
+      await ctx.db.wishlistItem.deleteMany({
+        where: {
+          userId: ctx.session.user.id,
+          itemReviewId: itemReview.id
+        }
+      })
+
+      return review
     }),
   update: protectedProcedure
     .input(updateReviewSchema)

@@ -75,6 +75,13 @@ export const useRateSubmit = (targetItem: ISelectedTargetItem) => {
           return [itemReviewTransformedData, ...oldData]
         }
       )
+
+      utils.wishlist.getAll.setData(undefined, (oldData) => {
+        if (!oldData) return
+        return oldData.filter(
+          (item) => item.itemReview.externalId !== variables.externalId
+        )
+      })
     }
   })
 

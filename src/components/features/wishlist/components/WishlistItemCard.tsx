@@ -1,0 +1,51 @@
+import { Button } from '@heroui/button'
+import { ArrowUpRightIcon } from 'lucide-react'
+import Link from 'next/link'
+import { Badge } from '~/components/ui/badge'
+import { ReviewCover } from '~/components/ui/review-cover'
+import type { WishlistItemData } from '../types/wishlist.types'
+import { formatWishlistDate } from '../utils/formatWishlistDate'
+import { DeleteWishlistItemButton } from './DeleteWishlistItemButton'
+
+interface IWishlistItemCardProps {
+  item: WishlistItemData
+}
+
+export const WishlistItemCard = ({ item }: IWishlistItemCardProps) => {
+  const rateHref = `/rate/${item.itemReview.type.toLowerCase()}/${item.itemReview.externalId}`
+
+  return (
+    <article className='bg-card-background border-border hover:border-secondary/50 flex flex-col gap-4 rounded-2xl border p-4 transition-colors sm:flex-row sm:items-center'>
+      <ReviewCover
+        title={item.itemReview.title}
+        coverUrl={item.itemReview.coverUrl}
+        className='w-24'
+      />
+      <div className='min-w-0 flex-1 space-y-2'>
+        <div className='flex flex-wrap items-center gap-2'>
+          <Badge type={item.itemReview.type} size='sm' />
+          <span className='text-muted-foreground text-xs'>
+            Добавлено {formatWishlistDate(item.createdAt)}
+          </span>
+        </div>
+        <h2 className='line-clamp-2 text-lg font-semibold'>
+          {item.itemReview.title}
+        </h2>
+      </div>
+      <div className='flex shrink-0 items-center gap-2 self-center max-lg:self-end'>
+        <Button
+          as={Link}
+          href={rateHref}
+          color='secondary'
+          endContent={<ArrowUpRightIcon className='size-4' />}>
+          Оценить
+        </Button>
+        <DeleteWishlistItemButton
+          id={item.id}
+          title={item.itemReview.title}
+          type={item.itemReview.type}
+        />
+      </div>
+    </article>
+  )
+}

@@ -45,6 +45,7 @@ model User {
   sessions     Session[]
   reviews      Review[]
   rankingLists RankingList[]
+  wishlist     WishlistItem[]
 }
 
 model VerificationToken {
@@ -72,6 +73,7 @@ model ItemReview {
   type             ContentType
   reviews          Review[]
   rankingListItems RankingListItem[]
+  wishlistItems    WishlistItem[]
 }
 
 model Review {
@@ -112,4 +114,17 @@ model RankingListItem {
 
   @@unique([rankingListId, position])
   @@unique([rankingListId, itemReviewId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  itemReview   ItemReview @relation(fields: [itemReviewId], references: [id])
+  itemReviewId String
+
+  @@unique([userId, itemReviewId])
 }

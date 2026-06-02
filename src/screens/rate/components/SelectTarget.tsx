@@ -34,6 +34,7 @@ export const SelectTarget = ({ category }: ISelectTargetProps) => {
       <div className='flex items-center gap-2'>
         <Input
           isClearable
+          autoComplete='off'
           placeholder='Введите название...'
           value={searchTerm}
           onValueChange={setSearchTerm}
