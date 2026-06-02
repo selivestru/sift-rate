@@ -22,7 +22,7 @@ export const LayoutShell = ({ children, email }: LayoutShellProps) => {
   }, [isMobileNavOpen])
 
   return (
-    <div className='relative flex min-h-dvh flex-col'>
+    <div className='relative z-10 flex min-h-dvh flex-col'>
       <Header
         email={email}
         isMobileNavOpen={isMobileNavOpen}

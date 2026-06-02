@@ -51,16 +51,20 @@ export const SeasonalEffect = () => {
   if (!season || seasonImages.length === 0) return null
 
   return (
-    <Snowfall
-      snowflakeCount={100}
-      radius={[5, 20]}
-      images={seasonImages}
-      style={{
-        position: 'fixed',
-        width: '100dvw',
-        height: '100dvh',
-        pointerEvents: 'none'
-      }}
-    />
+    <>
+      <Snowfall
+        snowflakeCount={80}
+        radius={[10, 20]}
+        speed={[0.5, 0.8]}
+        images={seasonImages}
+        style={{
+          position: 'fixed',
+          width: '100dvw',
+          height: '100dvh',
+          pointerEvents: 'none'
+        }}
+      />
+      <div className='pointer-events-none absolute inset-0 backdrop-blur-[2px]' />
+    </>
   )
 }
