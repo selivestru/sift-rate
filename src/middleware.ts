@@ -6,7 +6,14 @@ export default auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
 
-  const protectedRoutes = [ROUTES.REVIEWS, ROUTES.TIMELINE, ROUTES.RATE]
+  const protectedRoutes = [
+    ROUTES.REVIEWS,
+    ROUTES.RATE,
+    ROUTES.RANKING_LIST,
+    ROUTES.WISHLIST,
+    ROUTES.TIMELINE,
+    ROUTES.WHEEL
+  ]
   const isProtectedRoute = protectedRoutes.some((route) =>
     nextUrl.pathname.startsWith(route)
   )
