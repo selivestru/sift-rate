@@ -1,13 +1,18 @@
 'use client'
 
+import { Alert } from '@heroui/alert'
 import { Button } from '@heroui/button'
 import { Textarea } from '@heroui/input'
+import { useEffect } from 'react'
 import { Controller } from 'react-hook-form'
 import type { ISelectedTargetItem } from '~/components/features/rating'
 import { Badge } from '~/components/ui/badge'
+import { LoadingSpinner } from '~/components/ui/loading-spinner'
 import { ReviewCover } from '~/components/ui/review-cover'
+import { Show } from '~/components/ui/show'
 import { StarRating } from '~/components/ui/star-rating'
 import { MAX_REVIEW_LENGTH } from '~/constants/review'
+import { api } from '~/trpc/react'
 import { useRateSubmit } from '../hooks/useRateSubmit'
 
 interface ISubmitRatingProps {
@@ -15,11 +20,32 @@ interface ISubmitRatingProps {
 }
 
 export const SubmitRating = ({ targetItem }: ISubmitRatingProps) => {
-  const { onSubmit, isCreating, control } = useRateSubmit(targetItem)
+  const { onSubmit, isCreating, control, setValue } = useRateSubmit(targetItem)
+
+  const { data, isLoading } = api.review.getReviewByExternalId.useQuery({
+    externalId: targetItem.externalId,
+    type: targetItem.type
+  })
+
+  useEffect(() => {
+    if (!data) return
+
+    setValue('rating', data.rating)
+    setValue('review', data.review ?? '')
+  }, [data])
+
+  const hasReview = !!data
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
 
   return (
-    <form onSubmit={onSubmit}>
-      <div className='lg:border-border bg-card-background relative mb-4 rounded-xl p-3 lg:mb-8 lg:border lg:p-6'>
+    <form onSubmit={onSubmit} className='flex flex-col gap-4'>
+      <Show when={hasReview}>
+        <Alert color='danger' title='Вы уже оставили отзыв' />
+      </Show>
+      <div className='lg:border-border bg-card-background relative rounded-xl p-3 lg:border lg:p-6'>
         <Badge type={targetItem.type} className='absolute top-6 right-6' />
         <div className='mb-6 flex items-center gap-4'>
           <ReviewCover
@@ -63,8 +89,12 @@ export const SubmitRating = ({ targetItem }: ISubmitRatingProps) => {
           )}
         />
       </div>
-      <Button type='submit' fullWidth color='secondary' isLoading={isCreating}>
-        {isCreating ? 'Сохранение...' : 'Сохранить оценку'}
+      <Button fullWidth type='submit' color='secondary' isLoading={isCreating}>
+        {isCreating
+          ? 'Сохранение...'
+          : hasReview
+            ? 'Перезаписать оценку'
+            : 'Сохранить оценку'}
       </Button>
     </form>
   )

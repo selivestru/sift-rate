@@ -14,6 +14,7 @@ import {
 
 export const useRateSubmit = (targetItem: ISelectedTargetItem) => {
   const utils = api.useUtils()
+
   const { mutateAsync, isPending: isCreating } = api.review.create.useMutation({
     onSuccess: (data, variables) => {
       const transformedData: IRatingCardData = {
@@ -31,50 +32,77 @@ export const useRateSubmit = (targetItem: ISelectedTargetItem) => {
         userId: data.userId
       }
 
+      const hasReview = utils.review.getReviewByExternalId.getData({
+        externalId: variables.externalId,
+        type: variables.type
+      })
+
+      utils.review.getReviewByExternalId.setData(
+        {
+          externalId: variables.externalId,
+          type: variables.type
+        },
+        () => ({
+          rating: data.rating,
+          review: data.review
+        })
+      )
+
       utils.review.getReviews.setData(undefined, (oldData) => {
         if (!oldData) return
+
+        if (hasReview) {
+          return oldData.map((item) => {
+            if (item.itemReview.externalId === variables.externalId) {
+              return transformedData
+            }
+
+            return item
+          })
+        }
+
         return [transformedData, ...oldData]
       })
 
       const currentYear = new Date().getFullYear()
       const currentMonth = new Date().getMonth()
 
-      utils.review.getTimelineStats.setData(undefined, (oldData) => {
-        if (oldData?.[currentYear]?.months?.[currentMonth]) {
-          const isBest = data.rating === MAX_RATING
+      if (!hasReview) {
+        utils.review.getTimelineStats.setData(undefined, (oldData) => {
+          if (oldData?.[currentYear]?.months?.[currentMonth]) {
+            const isBest = data.rating === MAX_RATING
 
-          oldData[currentYear].total++
-          oldData[currentYear].months[currentMonth].total++
+            oldData[currentYear].total++
+            oldData[currentYear].months[currentMonth].total++
 
-          if (isBest) {
-            oldData[currentYear].best++
-            oldData[currentYear].months[currentMonth].best++
+            if (isBest) {
+              oldData[currentYear].best++
+              oldData[currentYear].months[currentMonth].best++
+            }
           }
-        }
 
-        return oldData
-      })
+          return oldData
+        })
+      }
 
       const from = new Date(currentYear, 0, 1).toISOString()
       const to = new Date(currentYear, 11, 31).toISOString()
 
       utils.review.getReviewsByDate.setData({ from, to }, (oldData) => {
         if (!oldData) return
+
+        if (hasReview) {
+          return oldData.map((item) => {
+            if (item.itemReview.externalId === variables.externalId) {
+              return transformedData
+            }
+
+            return item
+          })
+        }
+
         return [transformedData, ...oldData]
       })
-
-      const itemReviewTransformedData = {
-        ...transformedData,
-        user: data.user
-      }
-
-      utils.review.getItemReviews.setData(
-        { externalId: variables.externalId },
-        (oldData) => {
-          if (!oldData) return
-          return [itemReviewTransformedData, ...oldData]
-        }
-      )
 
       utils.wishlist.getAll.setData(undefined, (oldData) => {
         if (!oldData) return
@@ -85,26 +113,34 @@ export const useRateSubmit = (targetItem: ISelectedTargetItem) => {
     }
   })
 
-  const { control, handleSubmit, reset } = useForm<CreateReviewSchemaType>({
-    defaultValues: {
-      coverUrl: targetItem.coverUrl,
-      externalId: targetItem.externalId,
-      title: targetItem.title,
-      type: targetItem.type,
-      rating: 0,
-      review: ''
-    },
-    resolver: zodResolver(createReviewSchema)
-  })
+  const { control, handleSubmit, reset, setValue } =
+    useForm<CreateReviewSchemaType>({
+      defaultValues: {
+        coverUrl: targetItem.coverUrl,
+        externalId: targetItem.externalId,
+        title: targetItem.title,
+        type: targetItem.type,
+        rating: 0,
+        review: ''
+      },
+      resolver: zodResolver(createReviewSchema)
+    })
 
   const onSubmit = handleSubmit(async (data: CreateReviewSchemaType) => {
     try {
       await mutateAsync(data)
 
+      const hasReview = utils.review.getReviewByExternalId.getData({
+        externalId: data.externalId,
+        type: data.type
+      })
+
       reset()
       addToast({
         title: 'Успешно',
-        description: 'Ваш отзыв успешно создан!'
+        description: hasReview
+          ? 'Ваш отзыв успешно обновлен!'
+          : 'Ваш отзыв успешно создан!'
       })
     } catch (error) {
       console.error('Error creating rating: ', error)
@@ -123,6 +159,7 @@ export const useRateSubmit = (targetItem: ISelectedTargetItem) => {
 
   return {
     control,
+    setValue,
     isCreating,
     onSubmit
   }

@@ -6,6 +6,14 @@ export const useDeleteReview = (onClose: () => void) => {
   const utils = api.useUtils()
   const { mutateAsync, isPending: isDeleting } = api.review.delete.useMutation({
     onSuccess: (data, variables) => {
+      utils.review.getReviewByExternalId.setData(
+        {
+          externalId: data.itemReview.externalId,
+          type: data.itemReview.type
+        },
+        () => null
+      )
+
       utils.review.getReviews.setData(undefined, (oldData) => {
         if (!oldData) return
         return oldData.filter((item) => item.id !== variables.id)
@@ -37,14 +45,6 @@ export const useDeleteReview = (onClose: () => void) => {
         if (!oldData) return
         return oldData.filter((item) => item.id !== variables.id)
       })
-
-      utils.review.getItemReviews.setData(
-        { externalId: data.itemReview.externalId },
-        (oldData) => {
-          if (!oldData) return
-          return oldData.filter((item) => item.id !== variables.id)
-        }
-      )
     }
   })
 

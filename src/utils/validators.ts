@@ -93,10 +93,6 @@ export const validateCategory = z.object({
   id: z.string()
 })
 
-export const getItemReviewsSchema = z.object({
-  externalId: z.string()
-})
-
 export const addWishlistItemSchema = z.object({
   externalId: z.string(),
   title: z.string().trim().min(1),
@@ -113,3 +109,8 @@ export const deleteWishlistItemSchema = z.object({
 export type DeleteWishlistItemSchemaType = z.infer<
   typeof deleteWishlistItemSchema
 >
+
+export const getReviewByExternalIdSchema = z.object({
+  externalId: z.string(),
+  type: z.nativeEnum(ContentType)
+})

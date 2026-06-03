@@ -8,7 +8,7 @@ import {
   createReviewSchema,
   deleteRankingListSchema,
   deleteReviewSchema,
-  getItemReviewsSchema,
+  getReviewByExternalIdSchema,
   updateRankingListItemPositionSchema,
   updateRankingListSchema,
   updateReviewSchema,
@@ -194,8 +194,20 @@ export const reviewRouter = createTRPCRouter({
         }
       })
 
-      const review = await ctx.db.review.create({
-        data: {
+      const review = await ctx.db.review.upsert({
+        where: {
+          userId_itemReviewId: {
+            userId: ctx.session.user.id,
+            itemReviewId: itemReview.id
+          }
+        },
+        update: {
+          rating: input.rating,
+          review: input.review.length === 0 ? null : input.review,
+          userId: ctx.session.user.id,
+          itemReviewId: itemReview.id
+        },
+        create: {
           rating: input.rating,
           review: input.review.length === 0 ? null : input.review,
           userId: ctx.session.user.id,
@@ -252,7 +264,8 @@ export const reviewRouter = createTRPCRouter({
         include: {
           itemReview: {
             select: {
-              externalId: true
+              externalId: true,
+              type: true
             }
           }
         }
@@ -309,6 +322,28 @@ export const reviewRouter = createTRPCRouter({
 
     return reviews
   }),
+  getReviewByExternalId: protectedProcedure
+    .input(getReviewByExternalIdSchema)
+    .query(async ({ ctx, input }) => {
+      const review = await ctx.db.review.findFirst({
+        where: {
+          itemReview: {
+            externalId: input.externalId,
+            type: input.type
+          },
+          userId: ctx.session.user.id
+        }
+      })
+
+      if (!review) {
+        return null
+      }
+
+      return {
+        rating: review.rating,
+        review: review.review
+      }
+    }),
   getReviewsByDate: protectedProcedure
     .input(validateDates)
     .query(async ({ ctx, input }) => {
@@ -385,28 +420,6 @@ export const reviewRouter = createTRPCRouter({
 
     return Object.keys(stats).length > 0 ? stats : null
   }),
-  getItemReviews: protectedProcedure
-    .input(getItemReviewsSchema)
-    .query(async ({ ctx, input }) => {
-      return await ctx.db.review.findMany({
-        where: {
-          itemReview: {
-            externalId: input.externalId
-          }
-        },
-        include: {
-          user: {
-            select: {
-              name: true,
-              image: true
-            }
-          }
-        },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      })
-    }),
   getRankingList: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.rankingList.findMany({
       where: {
