@@ -7,6 +7,7 @@ import {
   ModalHeader,
   useDisclosure
 } from '@heroui/modal'
+import { Tooltip } from '@heroui/tooltip'
 import { Trash2Icon } from 'lucide-react'
 import { Badge } from '~/components/ui/badge'
 import type { ContentType } from '~/generated/prisma'
@@ -28,15 +29,17 @@ export const DeleteWishlistItemButton = ({
 
   return (
     <>
-      <Button
-        isIconOnly
-        variant='flat'
-        color='danger'
-        aria-label='Удалить из ожиданий'
-        onPress={onOpen}
-        className='hover:scale-110'>
-        <Trash2Icon size={20} />
-      </Button>
+      <Tooltip content='Удалить'>
+        <Button
+          isIconOnly
+          variant='flat'
+          color='danger'
+          aria-label='Удалить из ожиданий'
+          onPress={onOpen}
+          className='hover:scale-110'>
+          <Trash2Icon size={20} />
+        </Button>
+      </Tooltip>
       <Modal
         placement='center'
         isOpen={isOpen}

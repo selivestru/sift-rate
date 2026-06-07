@@ -7,6 +7,7 @@ import {
   ModalHeader,
   useDisclosure
 } from '@heroui/modal'
+import { Tooltip } from '@heroui/tooltip'
 import { Trash2Icon } from 'lucide-react'
 import { Badge } from '~/components/ui/badge'
 import type { ContentType } from '~/generated/prisma'
@@ -24,15 +25,17 @@ export const DeleteReview = ({ id, title, type }: IDeleteReviewProps) => {
 
   return (
     <>
-      <Button
-        isIconOnly
-        size='sm'
-        variant='flat'
-        color='danger'
-        onPress={onOpen}
-        className='hover:scale-110'>
-        <Trash2Icon size={16} />
-      </Button>
+      <Tooltip content='Удалить'>
+        <Button
+          isIconOnly
+          size='sm'
+          variant='flat'
+          color='danger'
+          onPress={onOpen}
+          className='hover:scale-110'>
+          <Trash2Icon size={16} />
+        </Button>
+      </Tooltip>
       <Modal
         placement='center'
         isOpen={isOpen}

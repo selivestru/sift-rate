@@ -8,6 +8,7 @@ import {
   ModalHeader,
   useDisclosure
 } from '@heroui/modal'
+import { Tooltip } from '@heroui/tooltip'
 import { PencilIcon } from 'lucide-react'
 import { Badge } from '~/components/ui/badge'
 import { StarRating } from '~/components/ui/star-rating'
@@ -46,15 +47,17 @@ export const UpdateReview = ({
 
   return (
     <>
-      <Button
-        isIconOnly
-        size='sm'
-        variant='flat'
-        color='warning'
-        onPress={onOpen}
-        className='hover:scale-110'>
-        <PencilIcon size={16} />
-      </Button>
+      <Tooltip content='Редактировать'>
+        <Button
+          isIconOnly
+          size='sm'
+          variant='flat'
+          color='warning'
+          onPress={onOpen}
+          className='hover:scale-110'>
+          <PencilIcon size={16} />
+        </Button>
+      </Tooltip>
       <Modal
         placement='center'
         isOpen={isOpen}

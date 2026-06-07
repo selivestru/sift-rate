@@ -1,4 +1,5 @@
 import { Button } from '@heroui/button'
+import { Tooltip } from '@heroui/tooltip'
 import { EyeIcon, StarIcon } from 'lucide-react'
 import Link from 'next/link'
 import { Badge } from '~/components/ui/badge'
@@ -43,29 +44,33 @@ export const WishlistItemCard = ({ item }: IWishlistItemCardProps) => {
       </div>
       <div className='flex shrink-0 items-center gap-2 self-center max-lg:self-end'>
         <Show when={isVideoContent}>
+          <Tooltip content='Смотреть'>
+            <Button
+              isIconOnly
+              color='primary'
+              variant='flat'
+              isLoading={isFetching}
+              onPress={
+                isVideoContent
+                  ? () => fetchWatchContent(item.itemReview.title)
+                  : undefined
+              }
+              className='hover:scale-110'>
+              <EyeIcon size={20} />
+            </Button>
+          </Tooltip>
+        </Show>
+        <Tooltip content='Оценить'>
           <Button
             isIconOnly
-            color='primary'
+            as={Link}
+            href={rateHref}
+            color='secondary'
             variant='flat'
-            isLoading={isFetching}
-            onPress={
-              isVideoContent
-                ? () => fetchWatchContent(item.itemReview.title)
-                : undefined
-            }
             className='hover:scale-110'>
-            <EyeIcon size={20} />
+            <StarIcon size={20} />
           </Button>
-        </Show>
-        <Button
-          isIconOnly
-          as={Link}
-          href={rateHref}
-          color='secondary'
-          variant='flat'
-          className='hover:scale-110'>
-          <StarIcon size={20} />
-        </Button>
+        </Tooltip>
         <DeleteWishlistItemButton
           id={item.id}
           title={item.itemReview.title}

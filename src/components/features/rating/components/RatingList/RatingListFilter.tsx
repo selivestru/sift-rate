@@ -33,9 +33,9 @@ export const RatingListFilter = ({ items }: IRatingListFilterProps) => {
   const selectedKeys = new Set([filter])
   const sortedRatings = [
     ['all', ratings.all],
-    ...[...Object.entries(ratings).filter(([key]) => key !== 'all')].sort(
-      (a, b) => +b[0] - +a[0]
-    )
+    ...Object.entries(ratings)
+      .filter(([key]) => key !== 'all')
+      .sort((a, b) => +b[0] - +a[0])
   ]
 
   const onSelectionChange = (keys: SharedSelection) => {

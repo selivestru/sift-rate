@@ -1,6 +1,6 @@
-import { Tab, Tabs } from '@heroui/tabs'
+import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
-import type { Key } from 'react'
+import { type Key } from 'react'
 import { BADGE_TAB_META } from '~/constants/badge'
 import { useRatingList } from '~/contexts/RatingListProvider'
 import type {
@@ -25,36 +25,38 @@ export const RatingListContentType = ({
   const selectedContentTypeBg = BADGE_TAB_META[state.contentType].bg
 
   return (
-    <Tabs
-      fullWidth
-      aria-label='Content type'
-      color='primary'
-      variant='bordered'
-      selectedKey={state.contentType}
-      onSelectionChange={onSelectionChange}
-      classNames={{
-        base: 'hidden lg:inline-flex',
-        cursor: selectedContentTypeBg
-      }}>
-      {Object.entries(BADGE_TAB_META).map(([key, { icon: Icon, text }]) => {
-        const tabItems =
-          key === 'ALL'
-            ? items.length
-            : items.filter((item) => item.itemReview.type === key).length
-        const formattedCount = new Intl.NumberFormat('ru-RU').format(tabItems)
+    <div className='hidden overflow-hidden rounded-xl lg:block'>
+      <div className='border-medium border-default-200 relative flex w-full scrollbar-thin gap-2 overflow-x-auto rounded-xl p-1'>
+        {Object.entries(BADGE_TAB_META).map(
+          ([key, { icon: Icon, text, titlePlural }]) => {
+            const tabItems =
+              key === 'ALL'
+                ? items.length
+                : items.filter((item) => item.itemReview.type === key).length
+            const formattedCount = new Intl.NumberFormat('ru-RU').format(
+              tabItems
+            )
 
-        return (
-          <Tab
-            key={key}
-            title={
-              <div className={cn('flex items-center gap-2', text)}>
+            return (
+              <Button
+                key={key}
+                variant={state.contentType === key ? 'flat' : 'light'}
+                className={cn(
+                  'flex h-auto shrink-0 items-center gap-2 px-4 py-2',
+                  text,
+                  {
+                    [selectedContentTypeBg]: state.contentType === key
+                  }
+                )}
+                onPress={() => onSelectionChange(key)}>
                 <Icon size={16} />
+                <span>{titlePlural}</span>
                 <span>{formattedCount}</span>
-              </div>
-            }
-          />
-        )
-      })}
-    </Tabs>
+              </Button>
+            )
+          }
+        )}
+      </div>
+    </div>
   )
 }
