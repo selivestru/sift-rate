@@ -8,14 +8,14 @@ export async function GET(request: NextRequest) {
   const title = searchParams.get('title')
   const year = searchParams.get('year')
 
-  if (!title || !year) {
+  if (!title) {
     return NextResponse.json({ error: 'missing params' }, { status: 400 })
   }
 
   try {
     const response = (await getJson({
       engine: 'google_light',
-      q: `site:kinopoisk.ru "${title}" ${year}`,
+      q: `site:kinopoisk.ru "${title}"${year ? ` ${year}` : ''}`,
       location: 'Moscow, Moscow, Russia',
       google_domain: 'google.com',
       hl: 'ru',

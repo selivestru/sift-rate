@@ -1,11 +1,8 @@
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
-import { addToast } from '@heroui/toast'
-import axios from 'axios'
-import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import type { ITargetItem } from '~/components/features/rating'
+import { useFetchWatchContent } from '~/components/features/rating/hooks/useFetchWatchContent'
 import { ReviewCover } from '~/components/ui/review-cover'
 import { Show } from '~/components/ui/show'
 import { ContentType } from '~/generated/prisma'
@@ -21,44 +18,11 @@ export const SearchTargetItem = ({
 }: ISearchTargetItemProps) => {
   const router = useRouter()
 
-  const [isFetching, setIsFetching] = useState(false)
+  const { isFetching, fetchWatchContent } = useFetchWatchContent()
 
   const rateHref = `/rate/${category.toLowerCase()}/${data.id}`
   const isVideoContent =
     category === ContentType.MOVIE || category === ContentType.TV
-
-  const handleClick = async () => {
-    setIsFetching(true)
-
-    try {
-      const response = await axios.get<{
-        url: string | null
-      }>('/api/watch', {
-        params: {
-          title: data.title,
-          year: dayjs(data.releaseDate).format('YYYY')
-        }
-      })
-
-      const watchUrl = response.data?.url
-
-      if (watchUrl) {
-        window.open(watchUrl, '_blank', 'noopener,noreferrer')
-      }
-    } catch (error) {
-      addToast({
-        title: 'Ошибка',
-        description: 'Не удалось получить ссылку на просмотр',
-        color: 'danger'
-      })
-
-      console.debug(
-        `Error fetching watch link for ${data.title}: ${JSON.stringify(error)}`
-      )
-    } finally {
-      setIsFetching(false)
-    }
-  }
 
   return (
     <div className='bg-card-background border-border hover:border-secondary group flex w-full items-center gap-4 overflow-hidden rounded-xl border p-4 transition-all max-lg:flex-col'>
@@ -80,7 +44,11 @@ export const SearchTargetItem = ({
             variant='flat'
             isLoading={isFetching}
             className='min-w-37.5 max-lg:min-w-auto'
-            onPress={isVideoContent ? handleClick : undefined}>
+            onPress={
+              isVideoContent
+                ? () => fetchWatchContent(data.title, data.releaseDate)
+                : undefined
+            }>
             {isFetching ? 'Загрузка...' : 'Смотреть'}
           </Button>
         </Show>

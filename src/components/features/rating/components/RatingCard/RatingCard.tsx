@@ -8,10 +8,12 @@ import { Badge } from '~/components/ui/badge'
 import { ReviewCover } from '~/components/ui/review-cover'
 import { Show } from '~/components/ui/show'
 import { MAX_RATING } from '~/constants/review'
+import { ContentType } from '~/generated/prisma'
 import type { IRatingCardData } from '../../types/rating.types'
 import { DeleteReview } from './DeleteReview'
 import { Rating } from './Rating'
 import { UpdateReview } from './UpdateReview'
+import { WatchContent } from './WatchContent'
 
 const cardVariants: Variants = {
   initial: { opacity: 0, y: -30 },
@@ -62,7 +64,10 @@ export const RatingCard = ({
           'mb-3': !isLast
         }
       )}>
-      <div className='device-touch:opacity-100 absolute top-4 right-4 flex gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+      <div className='absolute top-4 right-4 flex gap-2'>
+        <Show when={type === ContentType.MOVIE || type === ContentType.TV}>
+          <WatchContent title={title} />
+        </Show>
         <UpdateReview
           id={id}
           title={title}

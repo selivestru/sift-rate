@@ -32,6 +32,7 @@ export const SubmitRating = ({ targetItem }: ISubmitRatingProps) => {
 
     setValue('rating', data.rating)
     setValue('review', data.review ?? '')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   const hasReview = !!data

@@ -6,10 +6,6 @@ import { usePathname } from 'next/navigation'
 import { NAV_LINKS } from '~/constants/navLinks'
 
 const isActivePath = (pathname: string, href: string) => {
-  if (href === '/') {
-    return pathname === href
-  }
-
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
@@ -47,6 +43,12 @@ const NavLinksList = ({ onNavigate }: NavLinksListProps) => {
 }
 
 export const SidebarNav = () => {
+  const pathname = usePathname()
+
+  if (pathname.startsWith('/watch/')) {
+    return
+  }
+
   return (
     <aside className='sticky top-0 hidden h-fit pt-[calc(60px+10px+env(safe-area-inset-top))] lg:block'>
       <nav className='border-border bg-background-primary/60 flex flex-col gap-3 border border-t-transparent p-2 backdrop-blur-xl'>

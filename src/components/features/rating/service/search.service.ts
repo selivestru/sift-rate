@@ -106,7 +106,9 @@ export class SearchService {
         description += genres + ' • '
       }
 
-      description += dayjs(releaseDate).format('YYYY')
+      if (releaseDate) {
+        description += dayjs(releaseDate).format('YYYY')
+      }
 
       return {
         id: String(item.id),
@@ -131,7 +133,7 @@ export class SearchService {
     const { data } = await axios.get<{
       title: string
       genres: { id: number }[]
-      release_date: string
+      release_date?: string
       poster_path: string
     }>(`https://api.themoviedb.org/3/movie/${id}`, {
       headers: {
@@ -161,7 +163,9 @@ export class SearchService {
       description += genres + ' • '
     }
 
-    description += dayjs(releaseDate).format('YYYY')
+    if (releaseDate) {
+      description += dayjs(releaseDate).format('YYYY')
+    }
 
     return {
       externalId: id,
