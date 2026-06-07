@@ -57,7 +57,7 @@ export interface IAlbumTargetItem {
 
 export interface IGameTargetItem {
   name: string
-  released: string
+  released?: string
   background_image: string
   id: number
   genres?: { name: string }[]

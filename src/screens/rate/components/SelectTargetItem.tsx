@@ -31,7 +31,9 @@ export const SearchTargetItem = ({
         <h3 className='group-hover:text-secondary line-clamp-2 text-base font-semibold transition-colors'>
           {data.title}
         </h3>
-        <p className='text-muted-foreground text-sm'>{data.description}</p>
+        <Show when={data.description.length > 0}>
+          <p className='text-muted-foreground text-sm'>{data.description}</p>
+        </Show>
       </div>
       <div
         className={cn('max-lg:w-full', {

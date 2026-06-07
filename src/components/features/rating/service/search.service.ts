@@ -14,6 +14,8 @@ import type {
   ITvTargetItem
 } from '../types/search.types'
 
+const isDefined = <T>(value: T | undefined): value is T => value !== undefined
+
 const LIMIT_PER_PAGE = 20
 const getPages = (total: number, limit = LIMIT_PER_PAGE) =>
   Math.ceil(total / limit)
@@ -94,21 +96,16 @@ export class SearchService {
       const title = item.title
       const genres = item.genre_ids
         .map((id) => this.getMovieGenreName(id))
-        .join(' • ')
+        .filter(isDefined)
       const releaseDate = item.release_date
       const cover = item.poster_path
         ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
         : undefined
 
-      let description = ''
-
-      if (genres.length > 0) {
-        description += genres + ' • '
-      }
-
-      if (releaseDate) {
-        description += dayjs(releaseDate).format('YYYY')
-      }
+      const description = this.joinDescription([
+        ...genres,
+        releaseDate ? dayjs(releaseDate).format('YYYY') : ''
+      ])
 
       return {
         id: String(item.id),
@@ -151,21 +148,16 @@ export class SearchService {
     const title = data.title
     const genres = data.genres
       .map(({ id }) => this.getMovieGenreName(id))
-      .join(' • ')
+      .filter(isDefined)
     const releaseDate = data.release_date
     const coverUrl = data.poster_path
       ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
       : undefined
 
-    let description = ''
-
-    if (genres.length > 0) {
-      description += genres + ' • '
-    }
-
-    if (releaseDate) {
-      description += dayjs(releaseDate).format('YYYY')
-    }
+    const description = this.joinDescription([
+      ...genres,
+      releaseDate ? dayjs(releaseDate).format('YYYY') : ''
+    ])
 
     return {
       externalId: id,
@@ -207,19 +199,16 @@ export class SearchService {
       const title = item.name
       const genres = item.genre_ids
         .map((id) => this.getTvGenreName(id))
-        .join(' • ')
+        .filter(isDefined)
       const releaseDate = item.first_air_date
       const cover = item.poster_path
         ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
         : undefined
 
-      let description = ''
-
-      if (genres.length > 0) {
-        description += genres + ' • '
-      }
-
-      description += dayjs(releaseDate).format('YYYY')
+      const description = this.joinDescription([
+        ...genres,
+        releaseDate ? dayjs(releaseDate).format('YYYY') : ''
+      ])
 
       return {
         id: String(item.id),
@@ -242,7 +231,7 @@ export class SearchService {
     const { data } = await axios.get<{
       name: string
       genres: { id: number }[]
-      first_air_date: string
+      first_air_date?: string
       poster_path: string
     }>(`https://api.themoviedb.org/3/tv/${id}`, {
       headers: {
@@ -260,19 +249,16 @@ export class SearchService {
     const title = data.name
     const genres = data.genres
       .map(({ id }) => this.getTvGenreName(id))
-      .join(' • ')
+      .filter(isDefined)
     const releaseDate = data.first_air_date
     const coverUrl = data.poster_path
       ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
       : undefined
 
-    let description = ''
-
-    if (genres.length > 0) {
-      description += genres + ' • '
-    }
-
-    description += dayjs(releaseDate).format('YYYY')
+    const description = this.joinDescription([
+      ...genres,
+      releaseDate ? dayjs(releaseDate).format('YYYY') : ''
+    ])
 
     return {
       externalId: id,
@@ -334,13 +320,16 @@ export class SearchService {
       album: { cover_big: string }
       artist: { name: string }
       release_date: string
-    }>(`${env.NEXT_PUBLIC_SITE_URL}/api/deezer/search/song/${id}`)
+    }>(`/api/deezer/search/song/${id}`)
 
     if (!data) {
       return null
     }
 
-    const description = `${data.artist.name} • ${dayjs(data.release_date).format('YYYY')}`
+    const description = this.joinDescription([
+      data.artist.name,
+      data.release_date ? dayjs(data.release_date).format('YYYY') : ''
+    ])
 
     return {
       externalId: id,
@@ -442,14 +431,12 @@ export class SearchService {
     }
 
     const transformedData: ITargetItem[] = data.results.map((game) => {
-      let description = ''
+      const genres = game.genres?.map((genre) => genre.name) ?? []
 
-      if (game.genres && game.genres.length > 0) {
-        description +=
-          game.genres.map((genre) => genre.name).join(' • ') + ' • '
-      }
-
-      description += dayjs(game.released).format('YYYY')
+      const description = this.joinDescription([
+        ...genres,
+        game.released ? dayjs(game.released).format('YYYY') : ''
+      ])
 
       return {
         id: String(game.id),
@@ -485,13 +472,12 @@ export class SearchService {
       return null
     }
 
-    let description = ''
+    const genres = data.genres?.map((genre) => genre.name) ?? []
 
-    if (data.genres && data.genres.length > 0) {
-      description += data.genres.map((genre) => genre.name).join(' • ') + ' • '
-    }
-
-    description += dayjs(data.released).format('YYYY')
+    const description = this.joinDescription([
+      ...genres,
+      data.released ? dayjs(data.released).format('YYYY') : ''
+    ])
 
     return {
       externalId: id,
@@ -527,20 +513,18 @@ export class SearchService {
     }
 
     const transformedData: ITargetItem[] = data.items.map((book) => {
-      let description = ''
-      const authors = book.volumeInfo.authors
+      const { title, authors = [], publishedDate, imageLinks } = book.volumeInfo
 
-      if (authors && authors.length > 0) {
-        description += authors.join(' • ') + ' • '
-      }
-
-      description += dayjs(book.volumeInfo.publishedDate).format('YYYY')
+      const description = this.joinDescription([
+        ...authors,
+        publishedDate ? dayjs(publishedDate).format('YYYY') : ''
+      ])
 
       return {
         id: book.id,
-        title: book.volumeInfo.title,
+        title,
         description,
-        cover: book.volumeInfo.imageLinks?.thumbnail ?? undefined
+        cover: imageLinks?.thumbnail ?? undefined
       }
     })
 
@@ -568,22 +552,24 @@ export class SearchService {
       return null
     }
 
-    let description = ''
-    const authors = data.volumeInfo.authors
+    const { title, authors = [], publishedDate, imageLinks } = data.volumeInfo
 
-    if (authors && authors.length > 0) {
-      description += authors.join(' • ') + ' • '
-    }
-
-    description += dayjs(data.volumeInfo.publishedDate).format('YYYY')
+    const description = this.joinDescription([
+      ...authors,
+      publishedDate ? dayjs(publishedDate).format('YYYY') : ''
+    ])
 
     return {
       externalId: id,
       type: ContentType.BOOK,
-      title: data.volumeInfo.title,
-      coverUrl: data.volumeInfo.imageLinks?.thumbnail,
+      title,
+      coverUrl: imageLinks?.thumbnail,
       description
     }
+  }
+
+  private joinDescription(arr: string[]) {
+    return arr.filter(Boolean).join(' • ')
   }
 
   private getMovieGenreName(id: number) {
