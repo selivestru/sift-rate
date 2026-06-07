@@ -76,14 +76,14 @@ export const WatchPage = ({ id }: IWatchPageProps) => {
       )}
       {players && (
         <div className='absolute top-1/2 right-0 flex -translate-y-1/2 flex-col gap-2'>
-          {players.map((player) => (
+          {players.map((player, index) => (
             <Button
               key={player.type}
               color='primary'
               variant={selectedPlayer?.type === player.type ? 'solid' : 'faded'}
               className='rounded-r-none'
               onPress={() => changePlayer(player)}>
-              {player.type}
+              Плеер #{index + 1}
             </Button>
           ))}
         </div>
