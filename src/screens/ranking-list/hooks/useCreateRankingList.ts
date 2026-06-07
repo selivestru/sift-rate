@@ -51,7 +51,8 @@ export const useCreateRankingList = ({
 
         addToast({
           title: 'Ошибка',
-          description: 'Не удалось создать список рейтинга'
+          description: 'Не удалось создать список рейтинга',
+          color: 'danger'
         })
       },
       onSettled: () => {

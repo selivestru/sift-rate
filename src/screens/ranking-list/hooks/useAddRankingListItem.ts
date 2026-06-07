@@ -15,7 +15,8 @@ export const useAddRankingListItem = () => {
           title: 'Ошибка',
           description: isUniqueError
             ? 'Этот объект уже есть в списке'
-            : 'Не удалось добавить объект в список'
+            : 'Не удалось добавить объект в список',
+          color: 'danger'
         })
       }
     })

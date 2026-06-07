@@ -62,7 +62,8 @@ export const useDeleteReview = (onClose: () => void) => {
 
       addToast({
         title: 'Ошибка',
-        description: 'Произошла ошибка при удалении отзыва'
+        description: 'Произошла ошибка при удалении отзыва',
+        color: 'danger'
       })
     }
   }

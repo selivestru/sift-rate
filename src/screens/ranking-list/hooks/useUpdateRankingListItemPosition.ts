@@ -11,7 +11,8 @@ export const useUpdateRankingListItemPosition = () => {
 
         addToast({
           title: 'Ошибка',
-          description: 'Не удалось изменить позицию в списке'
+          description: 'Не удалось изменить позицию в списке',
+          color: 'danger'
         })
       }
     })

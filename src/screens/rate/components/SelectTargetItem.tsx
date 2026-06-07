@@ -1,5 +1,6 @@
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
+import { addToast } from '@heroui/toast'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
@@ -45,6 +46,12 @@ export const SearchTargetItem = ({
         window.open(watchUrl, '_blank', 'noopener,noreferrer')
       }
     } catch (error) {
+      addToast({
+        title: 'Ошибка',
+        description: 'Не удалось получить ссылку на просмотр',
+        color: 'danger'
+      })
+
       console.debug(
         `Error fetching watch link for ${data.title}: ${JSON.stringify(error)}`
       )

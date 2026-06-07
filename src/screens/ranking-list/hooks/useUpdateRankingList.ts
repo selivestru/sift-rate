@@ -60,7 +60,8 @@ export const useUpdateRankingList = ({
 
         addToast({
           title: 'Ошибка',
-          description: 'Не удалось обновить название'
+          description: 'Не удалось обновить название',
+          color: 'danger'
         })
       },
       onSettled: () => {

@@ -152,7 +152,8 @@ export const useRateSubmit = (targetItem: ISelectedTargetItem) => {
         title: 'Ошибка',
         description: isUniqueError
           ? 'Отзыв на этот объект уже создан'
-          : 'При создании отзыва произошла ошибка'
+          : 'При создании отзыва произошла ошибка',
+        color: 'danger'
       })
     }
   })

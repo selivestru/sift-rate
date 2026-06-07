@@ -30,7 +30,8 @@ export const useAddWishlistItem = () => {
         description:
           error instanceof Error
             ? error.message
-            : 'Не удалось добавить объект в ожидания'
+            : 'Не удалось добавить объект в ожидания',
+        color: 'danger'
       })
     }
   }

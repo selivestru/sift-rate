@@ -38,7 +38,8 @@ export const useDeleteRankingList = ({
 
         addToast({
           title: 'Ошибка',
-          description: 'Не удалось удалить список рейтинга'
+          description: 'Не удалось удалить список рейтинга',
+          color: 'danger'
         })
       },
       onSettled: () => {

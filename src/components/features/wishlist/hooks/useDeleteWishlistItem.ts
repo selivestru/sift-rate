@@ -27,7 +27,8 @@ export const useDeleteWishlistItem = (onClose: () => void) => {
 
       addToast({
         title: 'Ошибка',
-        description: 'Не удалось удалить объект из ожиданий'
+        description: 'Не удалось удалить объект из ожиданий',
+        color: 'danger'
       })
     }
   }

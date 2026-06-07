@@ -91,7 +91,8 @@ export const useUpdateReview = (
 
       addToast({
         title: 'Ошибка',
-        description: 'Произошла ошибка при обновлении отзыва'
+        description: 'Произошла ошибка при обновлении отзыва',
+        color: 'danger'
       })
     }
   })
