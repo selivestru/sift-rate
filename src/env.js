@@ -14,7 +14,8 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
-      .default('development')
+      .default('development'),
+    SERPAPI_API_KEY: z.string()
   },
   client: {
     NEXT_PUBLIC_MOVIE_DB_API_KEY: z.string(),
@@ -30,6 +31,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_MOVIE_DB_API_KEY: process.env.NEXT_PUBLIC_MOVIE_DB_API_KEY,
+    SERPAPI_API_KEY: process.env.SERPAPI_API_KEY,
     NEXT_PUBLIC_RAWG_API_KEY: process.env.NEXT_PUBLIC_RAWG_API_KEY,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL
   },

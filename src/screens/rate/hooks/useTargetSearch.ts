@@ -23,13 +23,12 @@ export const useTargetSearch = (selectedType: ContentType) => {
     const searchService = new SearchService()
 
     setError(null)
-    setResult([])
     setResult(undefined)
 
     try {
       const response = await searchService.search(
         selectedType,
-        searchTerm,
+        searchTerm.trim(),
         page
       )
 
@@ -61,9 +60,24 @@ export const useTargetSearch = (selectedType: ContentType) => {
     void searchTargets(page)
   }
 
+  const handleChangeSearchTerm = (value: string) => {
+    setSearchTerm(value)
+
+    const trimmedValue = value.trim()
+
+    const url = new URL(window.location.href)
+    url.searchParams.set('q', trimmedValue)
+
+    if (!trimmedValue.length) {
+      url.searchParams.delete('q')
+    }
+
+    window.history.replaceState({}, '', url)
+  }
+
   return {
     searchTerm,
-    setSearchTerm,
+    changeSearchTerm: handleChangeSearchTerm,
     result,
     isLoading,
     searchTargets,

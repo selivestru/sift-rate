@@ -1,14 +1,13 @@
 import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
 import { Pagination } from '@heroui/pagination'
-import { ChevronRight, SearchIcon } from 'lucide-react'
-import Link from 'next/link'
+import { SearchIcon } from 'lucide-react'
 import { LoadingSpinner } from '~/components/ui/loading-spinner'
-import { ReviewCover } from '~/components/ui/review-cover'
 import { Show } from '~/components/ui/show'
 import { type ContentType } from '~/generated/prisma'
 import { useTargetSearch } from '../hooks/useTargetSearch'
 import { getItemCountText } from '../utils/getItemCountText'
+import { SearchTargetItem } from './SelectTargetItem'
 
 interface ISelectTargetProps {
   category: ContentType
@@ -17,7 +16,7 @@ interface ISelectTargetProps {
 export const SelectTarget = ({ category }: ISelectTargetProps) => {
   const {
     searchTerm,
-    setSearchTerm,
+    changeSearchTerm,
     clearSearch,
     result,
     isLoading,
@@ -37,7 +36,7 @@ export const SelectTarget = ({ category }: ISelectTargetProps) => {
           autoComplete='off'
           placeholder='Введите название...'
           value={searchTerm}
-          onValueChange={setSearchTerm}
+          onValueChange={changeSearchTerm}
           size='lg'
           onKeyDown={async (e) => {
             if (e.key === 'Enter') await searchTargets()
@@ -67,29 +66,12 @@ export const SelectTarget = ({ category }: ISelectTargetProps) => {
       )}
       {!isLoading && result?.length === 0 && (
         <p className='text-muted-foreground text-center text-base'>
-          Ничего не найдено
+          Ничего не найдено
         </p>
       )}
       <div className='z-px flex flex-col gap-3'>
         {result?.map((result) => (
-          <Link
-            key={result.id}
-            href={`/rate/${category.toLowerCase()}/${result.id}`}
-            className='bg-card-background border-border hover:border-secondary group relative flex w-full cursor-pointer items-center gap-4 rounded-xl border p-4 transition-all'>
-            <ReviewCover title={result.title} coverUrl={result.cover} />
-            <div className='flex-1 overflow-hidden text-left'>
-              <h3 className='group-hover:text-secondary line-clamp-2 text-base font-semibold transition-colors'>
-                {result.title}
-              </h3>
-              <p className='text-muted-foreground text-sm'>
-                {result.description}
-              </p>
-            </div>
-            <div className='relative size-5'>
-              <ChevronRight className='text-muted-foreground group-hover:text-secondary size-full transition-colors' />
-              <ChevronRight className='text-muted-foreground group-hover:text-secondary absolute top-0 left-0 size-full transition-all group-hover:translate-x-1.5' />
-            </div>
-          </Link>
+          <SearchTargetItem key={result.id} category={category} data={result} />
         ))}
       </div>
       {!isLoading && totalPages > 1 && (
