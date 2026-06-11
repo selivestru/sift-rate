@@ -30,7 +30,7 @@ export const PageTitle = ({
       <h1
         className={cn(
           'text-center text-2xl font-bold lg:text-4xl',
-          hrefOnBack ? 'ml-auto' : 'mb-6',
+          hrefOnBack ? 'ml-auto' : 'mb-6 text-center',
           className
         )}>
         {children}
