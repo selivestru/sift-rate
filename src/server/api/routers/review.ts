@@ -21,12 +21,9 @@ import {
 export const runtime = 'nodejs'
 
 const client = new S3Client({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   region: env.S3_REGION,
   credentials: {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     accessKeyId: env.S3_ACCESS_KEY_ID,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     secretAccessKey: env.S3_SECRET_ACCESS_KEY
   }
 })
@@ -233,7 +230,6 @@ export const reviewRouter = createTRPCRouter({
 
         await client.send(
           new PutObjectCommand({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             Bucket: env.S3_BUCKET,
             Key: key,
             Body: optimized,

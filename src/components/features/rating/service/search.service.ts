@@ -363,7 +363,7 @@ export class SearchService {
     } catch {}
 
     return {
-      externalId: song.id,
+      externalId: data.id,
       type: ContentType.SONG,
       title: data.title,
       coverUrl,
@@ -473,7 +473,7 @@ export class SearchService {
     } catch {}
 
     return {
-      externalId: album.id,
+      externalId: data.id,
       type: ContentType.ALBUM,
       title: data.title,
       coverUrl,
