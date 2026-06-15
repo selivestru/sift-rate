@@ -1,20 +1,22 @@
 import axios from 'axios'
 import dayjs from 'dayjs'
+import { MOVIE_GENRES, TV_GENRES } from '~/constants/genres'
 import { env } from '~/env'
 import { ContentType } from '~/generated/prisma'
+import { isDefined } from '~/utils/isDefined'
 import type {
   IAlbumTargetItem,
   IBookTargetItem,
   IGameTargetItem,
+  IMovieDetail,
   IMovieTargetItem,
   ISearchResult,
   ISelectedTargetItem,
   ISongTargetItem,
   ITargetItem,
+  ITvDetail,
   ITvTargetItem
 } from '../types/search.types'
-
-const isDefined = <T>(value: T | undefined): value is T => value !== undefined
 
 const LIMIT_PER_PAGE = 10
 
@@ -95,7 +97,7 @@ export class SearchService {
     const result: ITargetItem[] = data.results.map((item) => {
       const title = item.title
       const genres = item.genre_ids
-        .map((id) => this.getMovieGenreName(id))
+        .map((id) => MOVIE_GENRES[id])
         .filter(isDefined)
       const releaseDate = item.release_date
       const cover = item.poster_path
@@ -126,19 +128,17 @@ export class SearchService {
   private async searchMovieById(
     id: string
   ): Promise<ISelectedTargetItem | null> {
-    const { data } = await axios.get<{
-      title: string
-      genres: { id: number }[]
-      release_date?: string
-      poster_path: string
-    }>(`https://api.themoviedb.org/3/movie/${id}`, {
-      headers: {
-        Authorization: `Bearer ${env.NEXT_PUBLIC_MOVIE_DB_API_KEY}`
-      },
-      params: {
-        language: 'ru-RU'
+    const { data } = await axios.get<IMovieDetail>(
+      `https://api.themoviedb.org/3/movie/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${env.NEXT_PUBLIC_MOVIE_DB_API_KEY}`
+        },
+        params: {
+          language: 'ru-RU'
+        }
       }
-    })
+    )
 
     if (!data) {
       return null
@@ -146,7 +146,7 @@ export class SearchService {
 
     const title = data.title
     const genres = data.genres
-      .map(({ id }) => this.getMovieGenreName(id))
+      .map(({ id }) => MOVIE_GENRES[id])
       .filter(isDefined)
     const releaseDate = data.release_date
     const coverUrl = data.poster_path
@@ -195,9 +195,7 @@ export class SearchService {
 
     const result: ITargetItem[] = data.results.map((item) => {
       const title = item.name
-      const genres = item.genre_ids
-        .map((id) => this.getTvGenreName(id))
-        .filter(isDefined)
+      const genres = item.genre_ids.map((id) => TV_GENRES[id]).filter(isDefined)
       const releaseDate = item.first_air_date
       const cover = item.poster_path
         ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
@@ -225,28 +223,24 @@ export class SearchService {
   }
 
   private async searchTvById(id: string): Promise<ISelectedTargetItem | null> {
-    const { data } = await axios.get<{
-      name: string
-      genres: { id: number }[]
-      first_air_date?: string
-      poster_path: string
-    }>(`https://api.themoviedb.org/3/tv/${id}`, {
-      headers: {
-        Authorization: `Bearer ${env.NEXT_PUBLIC_MOVIE_DB_API_KEY}`
-      },
-      params: {
-        language: 'ru-RU'
+    const { data } = await axios.get<ITvDetail>(
+      `https://api.themoviedb.org/3/tv/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${env.NEXT_PUBLIC_MOVIE_DB_API_KEY}`
+        },
+        params: {
+          language: 'ru-RU'
+        }
       }
-    })
+    )
 
     if (!data) {
       return null
     }
 
     const title = data.name
-    const genres = data.genres
-      .map(({ id }) => this.getTvGenreName(id))
-      .filter(isDefined)
+    const genres = data.genres.map(({ id }) => TV_GENRES[id]).filter(isDefined)
     const releaseDate = data.first_air_date
     const coverUrl = data.poster_path
       ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
@@ -644,50 +638,5 @@ export class SearchService {
 
   private joinDescription(arr: string[]) {
     return arr.filter(Boolean).join(' • ')
-  }
-
-  private getMovieGenreName(id: number) {
-    return {
-      28: 'Боевик',
-      12: 'Приключения',
-      16: 'Анимация',
-      35: 'Комедия',
-      80: 'Криминал',
-      99: 'Документальный фильм',
-      18: 'Драма',
-      10751: 'Семейный',
-      14: 'Фэнтези',
-      36: 'Исторический',
-      27: 'Ужасы',
-      10402: 'Музыка',
-      9648: 'Мистика',
-      10749: 'Мелодрама',
-      878: 'Научная фантастика',
-      10770: 'Телевизионный фильм',
-      53: 'Триллер',
-      10752: 'Военный',
-      37: 'Вестерн'
-    }[id]
-  }
-
-  private getTvGenreName(id: number) {
-    return {
-      10759: 'Боевик и приключения',
-      16: 'Анимация',
-      35: 'Комедия',
-      80: 'Криминал',
-      99: 'Документальный фильм',
-      18: 'Драма',
-      10751: 'Семейный',
-      10762: 'Детский',
-      9648: 'Мистика',
-      10763: 'Новости',
-      10764: 'Реалити-шоу',
-      10765: 'Фантастика и фэнтези',
-      10766: 'Мыльная опера',
-      10767: 'Ток-шоу',
-      10768: 'Военный и политика',
-      37: 'Вестерн'
-    }[id]
   }
 }

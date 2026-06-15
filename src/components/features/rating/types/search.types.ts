@@ -1,3 +1,4 @@
+import { type MOVIE_GENRES, type TV_GENRES } from '~/constants/genres'
 import type { ContentType } from '~/generated/prisma'
 
 export interface ISearchResult {
@@ -18,7 +19,7 @@ export interface IMovieTargetItem {
   id: number
   title: string
   poster_path?: string
-  genre_ids: number[]
+  genre_ids: (keyof typeof MOVIE_GENRES)[]
   release_date?: string
 }
 
@@ -26,7 +27,7 @@ export interface ITvTargetItem {
   id: number
   name: string
   poster_path?: string
-  genre_ids: number[]
+  genre_ids: (keyof typeof TV_GENRES)[]
   first_air_date?: string
 }
 
@@ -89,48 +90,15 @@ export interface IDetailedItem {
 }
 
 export interface IMovieDetail {
-  genres: { id: number; name: string }[]
   title: string
-  poster_path?: string
-  overview: string
+  genres: { id: keyof typeof MOVIE_GENRES }[]
+  release_date?: string
+  poster_path: string
 }
 
 export interface ITvDetail {
-  genres: { id: number; name: string }[]
   name: string
-  poster_path?: string
-  overview: string
-}
-
-export interface ISongDetail {
-  title: string
-  contributors: { name: string }[]
-  album: {
-    cover_medium: string
-  }
-}
-
-export interface IAlbumDetail {
-  title: string
-  contributors: { name: string }[]
-  cover: string
-}
-
-export interface IGameDetail {
-  name: string
-  description_raw: string
-  background_image: string
-  genres: { name: string }[]
-}
-
-export interface IBookDetail {
-  id: string
-  volumeInfo: {
-    title: string
-    description: string
-    categories: string[]
-    imageLinks: {
-      thumbnail?: string
-    }
-  }
+  genres: { id: keyof typeof TV_GENRES }[]
+  first_air_date?: string
+  poster_path: string
 }

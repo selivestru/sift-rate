@@ -17,7 +17,7 @@ const ALL_META = {
   text: 'text-slate-500'
 }
 
-const MOVIE_META = {
+export const MOVIE_META = {
   title: 'Фильм',
   titlePlural: 'Фильмы',
   icon: FilmIcon,
@@ -25,7 +25,7 @@ const MOVIE_META = {
   text: 'text-red-500'
 }
 
-const TV_META = {
+export const TV_META = {
   title: 'Сериал',
   titlePlural: 'Сериалы',
   icon: TvIcon,

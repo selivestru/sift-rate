@@ -17,7 +17,7 @@ export const LayoutShell = ({ children, email }: LayoutShellProps) => {
     if (isMobileNavOpen) {
       document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = 'unset'
+      document.body.style.removeProperty('overflow')
     }
   }, [isMobileNavOpen])
 

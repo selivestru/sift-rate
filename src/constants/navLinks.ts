@@ -1,7 +1,8 @@
 import {
-  BookmarkIcon,
   BookIcon,
+  BookmarkIcon,
   CircleDashedIcon,
+  CircleQuestionMarkIcon,
   ClockIcon,
   StarIcon,
   TrophyIcon
@@ -33,6 +34,11 @@ export const NAV_LINKS = [
     href: ROUTES.WHEEL,
     label: 'Колесо',
     icon: CircleDashedIcon
+  },
+  {
+    href: ROUTES.DISCOVER,
+    label: 'Что посмотреть?',
+    icon: CircleQuestionMarkIcon
   },
   {
     href: ROUTES.RATE,

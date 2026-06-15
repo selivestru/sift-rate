@@ -25,7 +25,8 @@ export const useFetchWatchContent = () => {
       const watchUrl = response.data?.url
 
       if (watchUrl) {
-        const id = watchUrl.split('/').filter(Boolean).at(-1)
+        const match = /\/(film|series)\/(\d+)/.exec(watchUrl)
+        const id = match?.[2]
 
         if (id) {
           router.push(`/watch/${id}`)

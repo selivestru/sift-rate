@@ -10,6 +10,7 @@ interface IProps {
   coverUrl: string | null | undefined
   title: string
   className?: string
+  imageClassName?: string
   unoptimized?: boolean
 }
 
@@ -18,6 +19,7 @@ export const ReviewCover = ({
   coverUrl,
   title,
   className,
+  imageClassName,
   unoptimized = false
 }: IProps) => {
   const cover = coverUrl ?? DEFAULT_COVER
@@ -40,12 +42,16 @@ export const ReviewCover = ({
       )}>
       <Image
         unoptimized={unoptimized}
+        quality={100}
         width={160}
-        height={160}
+        height={isMusic ? 160 : 300}
         src={hasError ? DEFAULT_COVER : imgSrcRef.current}
         onError={() => setHasError(true)}
         alt={title}
-        className='h-full w-full object-contain object-center transition-transform duration-300 group-hover:scale-110'
+        className={cn(
+          'h-full w-full object-contain object-center transition-transform duration-300 group-hover:scale-110',
+          imageClassName
+        )}
       />
     </div>
   )

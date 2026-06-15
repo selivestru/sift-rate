@@ -5,5 +5,6 @@ export const ROUTES = {
   RANKING_LIST: '/ranking-list',
   WISHLIST: '/wishlist',
   TIMELINE: '/timeline',
-  WHEEL: '/wheel'
+  WHEEL: '/wheel',
+  DISCOVER: '/discover'
 }
