@@ -3,6 +3,7 @@
 import { Button } from '@heroui/button'
 import { MoveLeftIcon, MoveRightIcon } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { LoadingSpinner } from '~/components/ui/loading-spinner'
 import { Show } from '~/components/ui/show'
@@ -18,6 +19,16 @@ interface IWatchPageProps {
 export const WatchPage = ({ id }: IWatchPageProps) => {
   const [isLoadedIframe, setIsLoadedIframe] = useState(false)
 
+  const router = useRouter()
+
+  const handleClickBack = () => {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push(ROUTES.REVIEWS)
+    }
+  }
+
   const { isFetching, players, selectedPlayer, changePlayer, error } =
     usePlayers(id)
 
@@ -30,12 +41,11 @@ export const WatchPage = ({ id }: IWatchPageProps) => {
           Не удалось загрузить видео
         </p>
         <Button
-          as={Link}
-          href={ROUTES.REVIEWS}
           color='primary'
           variant='flat'
           className='w-full max-w-62.5 max-sm:max-w-full'
-          startContent={<MoveLeftIcon />}>
+          startContent={<MoveLeftIcon />}
+          onPress={handleClickBack}>
           Назад
         </Button>
       </div>
@@ -54,12 +64,11 @@ export const WatchPage = ({ id }: IWatchPageProps) => {
           </h1>
 
           <Button
-            as={Link}
-            href={ROUTES.REVIEWS}
             color='primary'
             variant='flat'
             className='col-start-1 row-start-1 w-full max-w-62.5 max-sm:col-span-1 max-sm:row-start-2 max-sm:max-w-full'
-            startContent={<MoveLeftIcon />}>
+            startContent={<MoveLeftIcon />}
+            onPress={handleClickBack}>
             Назад
           </Button>
 
